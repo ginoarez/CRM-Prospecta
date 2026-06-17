@@ -20,5 +20,7 @@ def health():
 
 
 from app.api.routers import auth as auth_router
+from app.api.routers import leads as leads_router
 
 app.include_router(auth_router.router)
+app.include_router(leads_router.router)
