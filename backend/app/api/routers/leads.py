@@ -1,13 +1,13 @@
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
 from app.core.database import get_db
 from app.models import LeadStatus, User
 from app.schemas.lead import LeadCreate, LeadList, LeadOut, LeadUpdate, StageUpdate
-from app.services import leads as svc
+from app.services import csv_import, leads as svc
 
 router = APIRouter(prefix="/leads", tags=["leads"])
 
@@ -38,6 +38,13 @@ def list_leads(
 @router.post("", response_model=LeadOut, status_code=status.HTTP_201_CREATED)
 def create_lead(body: LeadCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     return svc.create_lead(db, body.model_dump(), owner_id=user.id)
+
+
+@router.post("/import-csv")
+def import_csv_endpoint(file: UploadFile = File(...), db: Session = Depends(get_db),
+                        user: User = Depends(get_current_user)):
+    raw = file.file.read()
+    return csv_import.import_csv(db, raw, owner_id=user.id)
 
 
 @router.get("/{lead_id}", response_model=LeadOut)
