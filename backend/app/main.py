@@ -19,4 +19,6 @@ def health():
     return {"status": "ok"}
 
 
-# Routers are included in later tasks.
+from app.api.routers import auth as auth_router
+
+app.include_router(auth_router.router)

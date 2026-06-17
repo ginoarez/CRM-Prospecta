@@ -12,7 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
 from app.core.database import Base, get_db
 from app.main import app
-import app.models  # noqa: F401
+import app.models as _app_models  # noqa: F401
 
 engine = create_engine(settings.DATABASE_URL)
 TestingSession = sessionmaker(bind=engine, autoflush=False, autocommit=False)
