@@ -23,7 +23,7 @@ services:
     depends_on:
       db: { condition: service_healthy }
       redis: { condition: service_started }
-    ports: ["8000:8000"]
+    ports: ["8100:8000"]   # host 8100 -> container 8000 (8000 is in a Windows reserved port range)
     volumes: ["./backend:/app"]
 
   worker:
@@ -37,7 +37,7 @@ services:
   frontend:
     build: ./frontend
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_API_URL: http://localhost:8100
     depends_on: [backend]
     ports: ["3000:3000"]
     volumes: ["./frontend:/app", "/app/node_modules"]
