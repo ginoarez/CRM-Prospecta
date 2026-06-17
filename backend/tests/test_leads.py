@@ -38,3 +38,20 @@ def test_update_and_delete(client, auth_headers):
 
 def test_list_requires_auth(client):
     assert client.get("/leads").status_code == 401
+
+
+def test_stage_change_creates_interaction(client, auth_headers):
+    lead_id = client.post("/leads", json={"business_name": "G"}, headers=auth_headers).json()["id"]
+    r = client.patch(f"/leads/{lead_id}/stage", json={"status": "calificado"}, headers=auth_headers)
+    assert r.status_code == 200 and r.json()["status"] == "calificado"
+    ints = client.get(f"/leads/{lead_id}/interactions", headers=auth_headers).json()
+    assert any(i["kind"] == "cambio_etapa" for i in ints)
+
+
+def test_add_note_interaction(client, auth_headers):
+    lead_id = client.post("/leads", json={"business_name": "G"}, headers=auth_headers).json()["id"]
+    r = client.post(f"/leads/{lead_id}/interactions",
+                    json={"kind": "nota", "content": "llamar mañana"}, headers=auth_headers)
+    assert r.status_code == 201
+    ints = client.get(f"/leads/{lead_id}/interactions", headers=auth_headers).json()
+    assert ints[0]["content"] == "llamar mañana"
