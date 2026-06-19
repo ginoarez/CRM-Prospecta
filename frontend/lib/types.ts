@@ -70,3 +70,16 @@ export interface Analysis {
 
 export interface AnalyzeResponse { task_id: string; status: string; }
 export interface TaskStatus { task_id: string; status: string; error: string | null; }
+
+export interface Template { id: string; name: string; channel: string; body: string; created_at: string; }
+export interface Message {
+  id: string;
+  lead_id: string;
+  channel: string;
+  direction: string;
+  body: string | null;
+  template_id: string | null;
+  status: string | null;
+  created_at: string;
+}
+export interface WaLink { url: string; body: string; phone: string; }
