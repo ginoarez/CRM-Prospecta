@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     ADMIN_EMAIL: str = "admin@agencia.com"
     ADMIN_PASSWORD: str = "change-me"
     CORS_ORIGINS: str = "http://localhost:3000"
+    NOMINATIM_URL: str = "https://nominatim.openstreetmap.org"
+    OVERPASS_URL: str = "https://overpass-api.de/api/interpreter"
+    GEO_HTTP_TIMEOUT: float = 30.0
 
 
 settings = Settings()
