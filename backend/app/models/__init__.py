@@ -3,5 +3,7 @@ from app.models.lead import Lead, LeadStatus
 from app.models.interaction import Interaction
 from app.models.geo_search import GeoSearch
 from app.models.ai_analysis import AiAnalysis
+from app.models.template import Template
+from app.models.message import Message
 
-__all__ = ["User", "Lead", "LeadStatus", "Interaction", "GeoSearch", "AiAnalysis"]
+__all__ = ["User", "Lead", "LeadStatus", "Interaction", "GeoSearch", "AiAnalysis", "Template", "Message"]
