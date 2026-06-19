@@ -1,5 +1,7 @@
 import uuid
 
+import pytest
+
 import app.services.scoring.signals as sig
 from app.models import AiAnalysis, Interaction, Lead, User
 from app.services.scoring.runner import run_analysis
@@ -57,3 +59,15 @@ def test_run_analysis_retries_then_succeeds(db, monkeypatch):
     analysis = run_analysis(db, lead, provider)
     assert provider.calls == 2
     assert analysis.score == 80
+
+
+def test_run_analysis_raises_when_parse_always_fails(db, monkeypatch):
+    monkeypatch.setattr(sig, "fetch_html", lambda w: None)
+    lead = _make_lead(db)
+
+    class BadProvider:
+        def complete(self, system, user):
+            return "no json here"
+
+    with pytest.raises(ValueError):
+        run_analysis(db, lead, BadProvider())

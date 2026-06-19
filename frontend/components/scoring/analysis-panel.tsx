@@ -9,7 +9,7 @@ export default function AnalysisPanel({ leadId }: { leadId: string }) {
   const [taskId, setTaskId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const { data: analysis } = useQuery({
+  const { data: analysis, isLoading } = useQuery({
     queryKey: ["analysis", leadId],
     queryFn: () => api<Analysis | null>(`/leads/${leadId}/analysis`),
   });
@@ -66,10 +66,10 @@ export default function AnalysisPanel({ leadId }: { leadId: string }) {
           {analysis.opportunities.length > 0 && (
             <div><b>Oportunidades:</b><ul className="list-disc pl-5">{analysis.opportunities.map((o, i) => <li key={i}>{o}</li>)}</ul></div>
           )}
-          <p className="text-xs text-gray-400">{analysis.model} · {new Date(analysis.created_at).toLocaleString()}</p>
+          <p className="text-xs text-gray-400">{analysis.model ? `${analysis.model} · ` : ""}{new Date(analysis.created_at).toLocaleString()}</p>
         </div>
       )}
-      {!analysis && !running && <p className="text-sm text-gray-500">Este lead aún no tiene análisis.</p>}
+      {!analysis && !running && !isLoading && <p className="text-sm text-gray-500">Este lead aún no tiene análisis.</p>}
     </div>
   );
 }

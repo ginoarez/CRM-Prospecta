@@ -22,7 +22,7 @@ def run_analysis(db: Session, lead: Lead, provider, *, retries: int = 1) -> AiAn
         except ValueError as exc:
             last_err = exc
     if parsed is None:
-        raise last_err  # noqa: RSE102 — propaga el último ValueError
+        raise last_err or RuntimeError("LLM output could not be parsed")  # noqa: RSE102
 
     analysis = AiAnalysis(
         lead_id=lead.id,
