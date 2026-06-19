@@ -93,7 +93,7 @@ export default function BuscarPage() {
         <>
           <MapView results={results} />
           <div className="flex items-center gap-3">
-            <button className="rounded bg-green-600 px-4 py-2 text-white"
+            <button type="button" className="rounded bg-green-600 px-4 py-2 text-white"
                     onClick={sendToCrm} disabled={chosen.length === 0}>
               Enviar al CRM ({chosen.length})
             </button>
@@ -114,7 +114,7 @@ export default function BuscarPage() {
                   </td>
                   <td>{r.name}</td>
                   <td>{r.phone ?? "—"}</td>
-                  <td>{r.website ? <a className="text-blue-600" href={r.website} target="_blank">link</a> : "—"}</td>
+                  <td>{r.website ? <a className="text-blue-600" href={r.website} target="_blank" rel="noreferrer">link</a> : "—"}</td>
                   <td>{r.address ?? "—"}</td>
                   <td>{r.already_imported && <span className="text-xs text-gray-500">ya importado</span>}</td>
                 </tr>

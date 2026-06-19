@@ -5,14 +5,18 @@ BBOX = [-34.60, -34.50, -58.50, -58.40]
 
 
 def _patch_geo(monkeypatch, pois):
-    calls = {"nominatim": 0}
+    calls = {"nominatim": 0, "overpass": 0}
 
     def fake_geocode(location):
         calls["nominatim"] += 1
         return BBOX
 
+    def fake_fetch_pois(bbox, tags):
+        calls["overpass"] += 1
+        return pois
+
     monkeypatch.setattr(nom, "geocode", fake_geocode)
-    monkeypatch.setattr(ov, "fetch_pois", lambda bbox, tags: pois)
+    monkeypatch.setattr(ov, "fetch_pois", fake_fetch_pois)
     return calls
 
 
@@ -48,6 +52,7 @@ def test_second_search_uses_cache_and_skips_nominatim(client, auth_headers, monk
     client.post("/geo/search", json={"location": "Palermo", "category": "gym"}, headers=auth_headers)
     client.post("/geo/search", json={"location": "  palermo ", "category": "gym"}, headers=auth_headers)
     assert calls["nominatim"] == 1  # la 2ª búsqueda reusó el bbox cacheado
+    assert calls["overpass"] == 2   # Overpass siempre se llama (no se cachea)
 
 
 def test_search_requires_auth(client):

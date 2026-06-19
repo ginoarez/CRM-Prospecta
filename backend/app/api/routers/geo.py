@@ -1,4 +1,6 @@
+import httpx
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
@@ -40,14 +42,14 @@ def search(body: SearchRequest, db: Session = Depends(get_db), user: User = Depe
     else:
         try:
             bbox = nominatim.geocode(body.location)
-        except Exception:
+        except httpx.HTTPError:
             raise HTTPException(status_code=502, detail="geocoding service error")
         if bbox is None:
             raise HTTPException(status_code=404, detail="location not found")
 
     try:
         pois = overpass.fetch_pois(bbox, tags)
-    except Exception:
+    except httpx.HTTPError:
         raise HTTPException(status_code=502, detail="overpass service error")
 
     existing = _existing_osm_ids(db)
@@ -70,19 +72,24 @@ def import_leads(body: ImportRequest, db: Session = Depends(get_db), user: User 
         if item.osm_id in existing:
             skipped += 1
             continue
-        db.add(Lead(
-            owner_id=user.id,
-            business_name=item.name,
-            industry=item.category,
-            phone=item.phone,
-            website=item.website,
-            latitude=item.lat,
-            longitude=item.lng,
-            osm_id=item.osm_id,
-            notes=item.address,
-            source="osm",
-        ))
-        existing.add(item.osm_id)
-        created += 1
+        try:
+            with db.begin_nested():
+                db.add(Lead(
+                    owner_id=user.id,
+                    business_name=item.name,
+                    industry=item.category,
+                    phone=item.phone,
+                    website=item.website,
+                    latitude=item.lat,
+                    longitude=item.lng,
+                    osm_id=item.osm_id,
+                    notes=item.address,
+                    source="osm",
+                ))
+                db.flush()
+            existing.add(item.osm_id)
+            created += 1
+        except IntegrityError:
+            skipped += 1
     db.commit()
     return ImportResponse(created=created, skipped_existing=skipped)
