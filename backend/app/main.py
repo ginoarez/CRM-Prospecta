@@ -26,6 +26,7 @@ from app.api.routers import dashboard as dashboard_router
 from app.api.routers import geo as geo_router
 from app.api.routers import scoring as scoring_router
 from app.api.routers import tasks as tasks_router
+from app.api.routers import templates as templates_router
 
 app.include_router(auth_router.router)
 app.include_router(leads_router.router)
@@ -34,3 +35,4 @@ app.include_router(dashboard_router.router)
 app.include_router(geo_router.router)
 app.include_router(scoring_router.router)
 app.include_router(tasks_router.router)
+app.include_router(templates_router.router)
