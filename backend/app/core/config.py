@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     NOMINATIM_URL: str = "https://nominatim.openstreetmap.org"
     OVERPASS_URL: str = "https://overpass-api.de/api/interpreter"
     GEO_HTTP_TIMEOUT: float = 30.0
+    LLM_PROVIDER: str = "anthropic"
+    LLM_MODEL: str = "claude-opus-4-8"
+    ANTHROPIC_API_KEY: str = ""
+    SCRAPE_TIMEOUT: float = 10.0
 
 
 settings = Settings()
