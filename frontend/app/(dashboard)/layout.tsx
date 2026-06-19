@@ -22,6 +22,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <Link className="block" href="/leads">Leads</Link>
         <Link className="block" href="/leads/import">Importar CSV</Link>
         <Link className="block" href="/buscar">Buscar (OSM)</Link>
+        <Link className="block" href="/plantillas">Plantillas</Link>
         <button className="mt-6 text-sm text-red-600" onClick={() => { clear(); router.replace("/login"); }}>
           Salir
         </button>
