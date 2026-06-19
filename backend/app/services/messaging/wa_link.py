@@ -11,7 +11,7 @@ def render_template(body: str, lead) -> str:
     def repl(match: re.Match) -> str:
         key = match.group(1)
         if key in _KNOWN:
-            return getattr(lead, key, None) or ""
+            return str(getattr(lead, key, None) or "")
         return match.group(0)  # placeholder desconocido: se deja literal
 
     return _VAR.sub(repl, body)

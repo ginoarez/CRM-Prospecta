@@ -37,6 +37,12 @@ def test_wa_link_template_404(client, auth_headers):
     assert r.status_code == 404
 
 
+def test_wa_link_lead_404(client, auth_headers):
+    tid = _template(client, auth_headers)
+    r = client.post(f"/leads/{uuid.uuid4()}/wa-link", json={"template_id": tid}, headers=auth_headers)
+    assert r.status_code == 404
+
+
 def test_messages_creates_and_moves_to_contactado(client, auth_headers):
     lead_id = _lead(client, auth_headers)
     r = client.post(f"/leads/{lead_id}/messages",

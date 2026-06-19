@@ -43,6 +43,7 @@ export default function MessagesPanel({ leadId }: { leadId: string }) {
     },
   });
 
+  // El href se reconstruye en cliente desde el body editado; el url del servidor (wa-link) sería obsoleto tras editar.
   const waUrl = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(body)}` : null;
 
   return (
@@ -67,8 +68,8 @@ export default function MessagesPanel({ leadId }: { leadId: string }) {
           <div className="flex gap-2">
             <a className="rounded bg-green-600 px-3 py-2 text-white" href={waUrl}
                target="_blank" rel="noreferrer">Abrir WhatsApp</a>
-            <button className="rounded bg-gray-800 px-3 py-2 text-white"
-                    onClick={() => markSent.mutate()}>Marcar como enviado</button>
+            <button className="rounded bg-gray-800 px-3 py-2 text-white disabled:opacity-50"
+                    disabled={markSent.isPending} onClick={() => markSent.mutate()}>Marcar como enviado</button>
           </div>
         </div>
       )}
