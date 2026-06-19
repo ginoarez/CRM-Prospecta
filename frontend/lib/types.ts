@@ -29,3 +29,26 @@ export interface Interaction {
   id: string; lead_id: string; kind: string; content: string | null; created_at: string;
 }
 export interface DashboardMetrics { total_leads: number; by_status: Record<string, number>; }
+
+export interface GeoCategory { key: string; label: string; }
+
+export interface GeoResult {
+  osm_id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  website: string | null;
+  phone: string | null;
+  address: string | null;
+  already_imported: boolean;
+}
+
+export interface GeoSearchResponse {
+  location: string;
+  category: string;
+  bbox: number[];
+  count: number;
+  results: GeoResult[];
+}
+
+export interface GeoImportResult { created: number; skipped_existing: number; }
