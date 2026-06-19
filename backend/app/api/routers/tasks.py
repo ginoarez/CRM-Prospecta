@@ -1,3 +1,5 @@
+import logging
+
 from celery.result import AsyncResult
 from fastapi import APIRouter, Depends
 
@@ -5,6 +7,8 @@ from app.api.deps import get_current_user
 from app.models import User
 from app.schemas.scoring import TaskStatusOut
 from app.workers.celery_app import celery
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
@@ -30,7 +34,8 @@ def task_status(task_id: str, _: User = Depends(get_current_user)):
         state = res.state
         mapped = map_celery_state(state)
         error = str(res.result) if mapped == "failure" else None
-    except Exception:
+    except Exception as exc:
+        logger.warning("task_status fallback for %s: %r", task_id, exc)
         mapped = "pending"
         error = None
     return TaskStatusOut(task_id=task_id, status=mapped, error=error)
