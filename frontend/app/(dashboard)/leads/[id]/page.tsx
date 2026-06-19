@@ -4,11 +4,12 @@ import { useParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import { Interaction, Lead } from "@/lib/types";
+import AnalysisPanel from "@/components/scoring/analysis-panel";
 
 export default function LeadDetailPage() {
   const { id } = useParams<{ id: string }>();
   const qc = useQueryClient();
-  const [tab, setTab] = useState<"info" | "interactions">("info");
+  const [tab, setTab] = useState<"info" | "analysis" | "interactions">("info");
   const [note, setNote] = useState("");
 
   const { data: lead } = useQuery({ queryKey: ["lead", id], queryFn: () => api<Lead>(`/leads/${id}`) });
@@ -26,17 +27,21 @@ export default function LeadDetailPage() {
 
   if (!lead) return <p>Cargando…</p>;
 
+  const tabClass = (t: string) => (tab === t ? "border-b-2 border-blue-600 pb-1" : "pb-1");
+
   return (
     <div>
       <h1 className="text-2xl font-bold">{lead.business_name}</h1>
       <div className="my-3 flex gap-4 border-b">
-        <button className={tab === "info" ? "border-b-2 border-blue-600 pb-1" : "pb-1"} onClick={() => setTab("info")}>Info</button>
-        <button className={tab === "interactions" ? "border-b-2 border-blue-600 pb-1" : "pb-1"} onClick={() => setTab("interactions")}>Interacciones</button>
+        <button className={tabClass("info")} onClick={() => setTab("info")}>Info</button>
+        <button className={tabClass("analysis")} onClick={() => setTab("analysis")}>Análisis IA</button>
+        <button className={tabClass("interactions")} onClick={() => setTab("interactions")}>Interacciones</button>
       </div>
 
       {tab === "info" && (
         <dl className="grid grid-cols-2 gap-2 text-sm">
           <dt className="font-medium">Estado</dt><dd>{lead.status}</dd>
+          <dt className="font-medium">Score</dt><dd>{lead.score ?? "—"}</dd>
           <dt className="font-medium">Ciudad</dt><dd>{lead.city ?? "—"}</dd>
           <dt className="font-medium">País</dt><dd>{lead.country ?? "—"}</dd>
           <dt className="font-medium">Teléfono</dt><dd>{lead.phone ?? "—"}</dd>
@@ -45,6 +50,8 @@ export default function LeadDetailPage() {
           <dt className="font-medium">Origen</dt><dd>{lead.source}</dd>
         </dl>
       )}
+
+      {tab === "analysis" && <AnalysisPanel leadId={id} />}
 
       {tab === "interactions" && (
         <div className="space-y-3">
