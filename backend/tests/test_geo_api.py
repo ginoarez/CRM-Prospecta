@@ -52,3 +52,33 @@ def test_second_search_uses_cache_and_skips_nominatim(client, auth_headers, monk
 
 def test_search_requires_auth(client):
     assert client.post("/geo/search", json={"location": "X", "category": "gym"}).status_code == 401
+
+
+def test_import_creates_and_dedupes(client, auth_headers):
+    payload = {"items": [
+        {"osm_id": "node/10", "name": "Gym A", "lat": -34.5, "lng": -58.4, "category": "gym"},
+        {"osm_id": "node/10", "name": "Gym A dup", "lat": -34.5, "lng": -58.4, "category": "gym"},
+        {"osm_id": "node/11", "name": "Gym B", "lat": -34.6, "lng": -58.5, "category": "gym"},
+    ]}
+    r = client.post("/geo/import", json=payload, headers=auth_headers)
+    assert r.status_code == 200
+    assert r.json() == {"created": 2, "skipped_existing": 1}
+
+
+def test_import_skips_already_existing_across_calls(client, auth_headers):
+    item = {"items": [{"osm_id": "node/20", "name": "X", "lat": 1.0, "lng": 2.0, "category": "gym"}]}
+    client.post("/geo/import", json=item, headers=auth_headers)
+    r2 = client.post("/geo/import", json=item, headers=auth_headers)
+    assert r2.json() == {"created": 0, "skipped_existing": 1}
+    # El lead creado tiene source='osm'
+    leads = client.get("/leads?q=X", headers=auth_headers).json()["items"]
+    assert any(l["source"] == "osm" for l in leads)
+
+
+def test_imported_lead_marked_already_imported_in_search(client, auth_headers, monkeypatch):
+    client.post("/geo/import",
+                json={"items": [{"osm_id": "node/30", "name": "Imp", "lat": 1.0, "lng": 2.0, "category": "gym"}]},
+                headers=auth_headers)
+    _patch_geo(monkeypatch, [_poi(osm_id="node/30", name="Imp")])
+    r = client.post("/geo/search", json={"location": "Palermo", "category": "gym"}, headers=auth_headers)
+    assert r.json()["results"][0]["already_imported"] is True

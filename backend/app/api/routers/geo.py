@@ -5,7 +5,8 @@ from app.api.deps import get_current_user
 from app.core.database import get_db
 from app.models import Lead, User
 from app.models.geo_search import GeoSearch
-from app.schemas.geo import CategoryOut, GeoResult, SearchRequest, SearchResponse
+from app.schemas.geo import (CategoryOut, GeoResult, ImportRequest, ImportResponse,
+                             SearchRequest, SearchResponse)
 from app.services.geo import categories, nominatim, overpass
 
 router = APIRouter(prefix="/geo", tags=["geo"])
@@ -58,3 +59,30 @@ def search(body: SearchRequest, db: Session = Depends(get_db), user: User = Depe
 
     return SearchResponse(location=body.location, category=body.category, bbox=bbox,
                           count=len(results), results=results)
+
+
+@router.post("/import", response_model=ImportResponse)
+def import_leads(body: ImportRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    existing = _existing_osm_ids(db)
+    created = 0
+    skipped = 0
+    for item in body.items:
+        if item.osm_id in existing:
+            skipped += 1
+            continue
+        db.add(Lead(
+            owner_id=user.id,
+            business_name=item.name,
+            industry=item.category,
+            phone=item.phone,
+            website=item.website,
+            latitude=item.lat,
+            longitude=item.lng,
+            osm_id=item.osm_id,
+            notes=item.address,
+            source="osm",
+        ))
+        existing.add(item.osm_id)
+        created += 1
+    db.commit()
+    return ImportResponse(created=created, skipped_existing=skipped)
