@@ -13,6 +13,10 @@ from app.core.config import settings
 from app.core.database import Base, get_db
 from app.main import app
 import app.models as _app_models  # noqa: F401
+from app.workers.celery_app import celery as _celery
+
+_celery.conf.task_always_eager = True
+_celery.conf.task_eager_propagates = True
 
 engine = create_engine(settings.DATABASE_URL)
 TestingSession = sessionmaker(bind=engine, autoflush=False, autocommit=False)

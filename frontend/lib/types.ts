@@ -52,3 +52,21 @@ export interface GeoSearchResponse {
 }
 
 export interface GeoImportResult { created: number; skipped_existing: number; }
+
+export interface Analysis {
+  id: string;
+  lead_id: string;
+  score: number | null;
+  needs: string[];
+  urgency: string | null;
+  buy_probability: number | null;
+  detected_problems: string[];
+  opportunities: string[];
+  summary: string | null;
+  raw_signals: Record<string, unknown>;
+  model: string | null;
+  created_at: string;
+}
+
+export interface AnalyzeResponse { task_id: string; status: string; }
+export interface TaskStatus { task_id: string; status: string; error: string | null; }
