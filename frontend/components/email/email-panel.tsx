@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { EmailPreview, EmailSendResponse, Template, TaskStatus } from "@/lib/types";
+import WritingToolbar from "@/components/assistant/writing-toolbar";
 
 export default function EmailPanel({ leadId }: { leadId: string }) {
   const qc = useQueryClient();
@@ -68,6 +69,7 @@ export default function EmailPanel({ leadId }: { leadId: string }) {
       </div>
       <input className="w-full rounded border p-2" placeholder="Asunto"
              value={subject} onChange={(e) => setSubject(e.target.value)} />
+      <WritingToolbar value={body} onChange={setBody} />
       <textarea className="h-40 w-full rounded border p-2" placeholder="Cuerpo del correo"
                 value={body} onChange={(e) => setBody(e.target.value)} />
       <button className="rounded bg-blue-600 px-3 py-2 text-white disabled:opacity-50"
