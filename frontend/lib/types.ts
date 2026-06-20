@@ -83,3 +83,24 @@ export interface Message {
   created_at: string;
 }
 export interface WaLink { url: string; body: string; phone: string; }
+
+export interface ProposalContent {
+  diagnostico?: string;
+  problemas?: string[];
+  oportunidades?: string[];
+  soluciones?: string[];
+  beneficios?: string[];
+  tiempo_estimado?: string;
+  precio?: number | null;
+  roi_estimado?: string;
+}
+export interface Proposal {
+  id: string;
+  lead_id: string;
+  content: ProposalContent;
+  price: number | null;
+  pdf_path: string | null;
+  pdf_available: boolean;
+  created_at: string;
+}
+export interface ProposalResponse { task_id: string; status: string; }
