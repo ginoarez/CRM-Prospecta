@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { Lead, Message, Template, TaskStatus, WaLink, WaSendResponse } from "@/lib/types";
+import WritingToolbar from "@/components/assistant/writing-toolbar";
 
 export default function MessagesPanel({ leadId }: { leadId: string }) {
   const qc = useQueryClient();
@@ -149,6 +150,8 @@ export default function MessagesPanel({ leadId }: { leadId: string }) {
             </ul>
           )}
         </div>
+        <WritingToolbar value={waText} onChange={setWaText}
+          context={lead ? `${lead.business_name}${lead.city ? ", " + lead.city : ""}` : undefined} />
         <textarea className="w-full rounded border p-2 text-sm" rows={3}
                   placeholder="Mensaje (solo dentro de la ventana de 24 h)"
                   value={waText} onChange={(e) => setWaText(e.target.value)} />
