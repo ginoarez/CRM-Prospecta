@@ -27,6 +27,13 @@ class Settings(BaseSettings):
     AGENCY_LOGO_URL: str = ""
     AGENCY_COLOR: str = "#2563eb"
     PROPOSALS_DIR: str = "storage/proposals"
+    SMTP_HOST: str = ""
+    SMTP_PORT: int = 587
+    SMTP_USER: str = ""
+    SMTP_PASS: str = ""
+    SMTP_FROM: str = "hola@tuagencia.com"
+    SMTP_FROM_NAME: str = "Tu Agencia"
+    SMTP_STARTTLS: bool = True
 
 
 settings = Settings()
