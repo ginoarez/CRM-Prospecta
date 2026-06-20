@@ -104,3 +104,6 @@ export interface Proposal {
   created_at: string;
 }
 export interface ProposalResponse { task_id: string; status: string; }
+
+export interface EmailPreview { subject: string; body: string; to: string; }
+export interface EmailSendResponse { task_id: string; status: string; }
