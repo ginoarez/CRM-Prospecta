@@ -80,3 +80,22 @@ def send_lead_email(lead_id: str, subject: str, body: str) -> dict:
         return {"message_id": str(msg.id), "status": "enviado"}
     finally:
         db.close()
+
+
+@celery.task(name="send_wa_cloud")
+def send_wa_cloud(lead_id: str, payload: dict) -> dict:
+    from datetime import datetime, timezone
+
+    from app.core.database import SessionLocal
+    from app.models import Lead
+    from app.services.whatsapp.sender import run_wa_send
+
+    db = SessionLocal()
+    try:
+        lead = db.get(Lead, lead_id)
+        if lead is None:
+            raise ValueError(f"lead {lead_id} not found")
+        msg = run_wa_send(db, lead, payload, datetime.now(timezone.utc))
+        return {"message_id": str(msg.id), "status": msg.status}
+    finally:
+        db.close()
