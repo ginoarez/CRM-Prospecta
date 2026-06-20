@@ -58,6 +58,8 @@ class LeadOut(BaseModel):
     notes: str | None
     created_at: datetime
     updated_at: datetime
+    whatsapp_opt_out: bool
+    last_inbound_at: datetime | None
 
     model_config = {"from_attributes": True}
 

@@ -34,6 +34,12 @@ class Settings(BaseSettings):
     SMTP_FROM: str = "hola@tuagencia.com"
     SMTP_FROM_NAME: str = "Tu Agencia"
     SMTP_STARTTLS: bool = True
+    WHATSAPP_TOKEN: str = ""
+    WHATSAPP_PHONE_ID: str = ""
+    WHATSAPP_BUSINESS_ID: str = ""
+    WHATSAPP_VERIFY_TOKEN: str = ""
+    WHATSAPP_API_URL: str = "https://graph.facebook.com"
+    WHATSAPP_API_VERSION: str = "v21.0"
 
 
 settings = Settings()
