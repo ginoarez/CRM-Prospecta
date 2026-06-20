@@ -30,6 +30,7 @@ from app.api.routers import templates as templates_router
 from app.api.routers import messaging as messaging_router
 from app.api.routers import proposals as proposals_router
 from app.api.routers import email as email_router
+from app.api.routers import meetings as meetings_router
 
 app.include_router(auth_router.router)
 app.include_router(leads_router.router)
@@ -42,3 +43,4 @@ app.include_router(templates_router.router)
 app.include_router(messaging_router.router)
 app.include_router(proposals_router.router)
 app.include_router(email_router.router)
+app.include_router(meetings_router.router)
