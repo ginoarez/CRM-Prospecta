@@ -31,6 +31,8 @@ from app.api.routers import messaging as messaging_router
 from app.api.routers import proposals as proposals_router
 from app.api.routers import email as email_router
 from app.api.routers import meetings as meetings_router
+from app.api.routers import webhooks as webhooks_router
+from app.api.routers import wa_cloud as wa_cloud_router
 
 app.include_router(auth_router.router)
 app.include_router(leads_router.router)
@@ -44,3 +46,5 @@ app.include_router(messaging_router.router)
 app.include_router(proposals_router.router)
 app.include_router(email_router.router)
 app.include_router(meetings_router.router)
+app.include_router(webhooks_router.router)
+app.include_router(wa_cloud_router.router)
