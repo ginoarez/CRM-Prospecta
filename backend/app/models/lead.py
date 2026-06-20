@@ -2,7 +2,7 @@ import enum
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Double, ForeignKey, Integer, SmallInteger, String, Text, func
+from sqlalchemy import Boolean, DateTime, Double, ForeignKey, Integer, SmallInteger, String, Text, func
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
@@ -46,5 +46,7 @@ class Lead(Base):
     osm_id: Mapped[str | None] = mapped_column(String, unique=True)
     source: Mapped[str] = mapped_column(String, default="manual")
     notes: Mapped[str | None] = mapped_column(Text)
+    whatsapp_opt_out: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    last_inbound_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now(), onupdate=func.now())

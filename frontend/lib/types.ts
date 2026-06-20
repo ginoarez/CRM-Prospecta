@@ -22,6 +22,8 @@ export interface Lead {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  whatsapp_opt_out: boolean;
+  last_inbound_at: string | null;
 }
 
 export interface LeadList { items: Lead[]; total: number; page: number; page_size: number; }
@@ -120,3 +122,5 @@ export interface Meeting {
   created_at: string;
   google_calendar_url: string;
 }
+
+export interface WaSendResponse { task_id: string; status: string; }
