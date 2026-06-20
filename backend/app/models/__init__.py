@@ -5,5 +5,6 @@ from app.models.geo_search import GeoSearch
 from app.models.ai_analysis import AiAnalysis
 from app.models.template import Template
 from app.models.message import Message
+from app.models.proposal import Proposal
 
-__all__ = ["User", "Lead", "LeadStatus", "Interaction", "GeoSearch", "AiAnalysis", "Template", "Message"]
+__all__ = ["User", "Lead", "LeadStatus", "Interaction", "GeoSearch", "AiAnalysis", "Template", "Message", "Proposal"]

@@ -20,6 +20,13 @@ class Settings(BaseSettings):
     LLM_MODEL: str = "claude-opus-4-8"
     ANTHROPIC_API_KEY: str = ""
     SCRAPE_TIMEOUT: float = 10.0
+    AGENCY_NAME: str = "Tu Agencia"
+    AGENCY_TAGLINE: str = "IA, automatización y crecimiento"
+    AGENCY_EMAIL: str = "hola@tuagencia.com"
+    AGENCY_PHONE: str = "+57 300 000 0000"
+    AGENCY_LOGO_URL: str = ""
+    AGENCY_COLOR: str = "#2563eb"
+    PROPOSALS_DIR: str = "storage/proposals"
 
 
 settings = Settings()
