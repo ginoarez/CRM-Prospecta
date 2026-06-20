@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<style>
+  @page { size: A4; margin: 2cm; }
+  body { font-family: "Helvetica", "Arial", sans-serif; color: #1f2937; font-size: 12px; }
+  header { border-bottom: 3px solid {{ color }}; padding-bottom: 12px; margin-bottom: 20px; }
+  header .agency { font-size: 20px; font-weight: bold; color: {{ color }}; }
+  header .tagline { color: #6b7280; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 15px; color: {{ color }}; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; margin-top: 20px; }
+  ul { margin: 6px 0; padding-left: 18px; }
+  .price { font-size: 26px; font-weight: bold; color: {{ color }}; }
+  .meta { color: #6b7280; font-size: 11px; }
+  footer { margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 10px; color: #6b7280; font-size: 11px; }
+  .logo { max-height: 48px; }
+</style>
+</head>
+<body>
+  <header>
+    {% if logo_url %}<img class="logo" src="{{ logo_url }}" alt="logo" />{% endif %}
+    <div class="agency">{{ agency_name }}</div>
+    <div class="tagline">{{ agency_tagline }}</div>
+  </header>
+
+  <h1>Propuesta para {{ lead.business_name }}</h1>
+  <div class="meta">{{ lead.city or "" }}{% if lead.industry %} · {{ lead.industry }}{% endif %} · {{ date }}</div>
+
+  <h2>Diagnóstico</h2>
+  <p>{{ content.diagnostico or "—" }}</p>
+
+  {% if content.problemas %}
+  <h2>Problemas detectados</h2>
+  <ul>{% for p in content.problemas %}<li>{{ p }}</li>{% endfor %}</ul>
+  {% endif %}
+
+  {% if content.oportunidades %}
+  <h2>Oportunidades</h2>
+  <ul>{% for o in content.oportunidades %}<li>{{ o }}</li>{% endfor %}</ul>
+  {% endif %}
+
+  {% if content.soluciones %}
+  <h2>Soluciones propuestas</h2>
+  <ul>{% for s in content.soluciones %}<li>{{ s }}</li>{% endfor %}</ul>
+  {% endif %}
+
+  {% if content.beneficios %}
+  <h2>Beneficios</h2>
+  <ul>{% for b in content.beneficios %}<li>{{ b }}</li>{% endfor %}</ul>
+  {% endif %}
+
+  <h2>Inversión</h2>
+  <p class="price">{% if content.precio %}${{ "{:,.0f}".format(content.precio) }} USD{% else %}A convenir{% endif %}</p>
+  {% if content.tiempo_estimado %}<p><strong>Tiempo estimado:</strong> {{ content.tiempo_estimado }}</p>{% endif %}
+  {% if content.roi_estimado %}<p><strong>ROI estimado:</strong> {{ content.roi_estimado }}</p>{% endif %}
+
+  <footer>
+    {{ agency_name }} · {{ agency_email }} · {{ agency_phone }}
+  </footer>
+</body>
+</html>

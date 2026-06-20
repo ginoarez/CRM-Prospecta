@@ -28,6 +28,7 @@ from app.api.routers import scoring as scoring_router
 from app.api.routers import tasks as tasks_router
 from app.api.routers import templates as templates_router
 from app.api.routers import messaging as messaging_router
+from app.api.routers import proposals as proposals_router
 
 app.include_router(auth_router.router)
 app.include_router(leads_router.router)
@@ -38,3 +39,4 @@ app.include_router(scoring_router.router)
 app.include_router(tasks_router.router)
 app.include_router(templates_router.router)
 app.include_router(messaging_router.router)
+app.include_router(proposals_router.router)
