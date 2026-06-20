@@ -107,3 +107,16 @@ export interface ProposalResponse { task_id: string; status: string; }
 
 export interface EmailPreview { subject: string; body: string; to: string; }
 export interface EmailSendResponse { task_id: string; status: string; }
+
+export interface Meeting {
+  id: string;
+  lead_id: string;
+  title: string;
+  scheduled_at: string;
+  duration_minutes: number;
+  location: string | null;
+  notes: string | null;
+  status: string;
+  created_at: string;
+  google_calendar_url: string;
+}
