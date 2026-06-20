@@ -38,6 +38,9 @@ services:
     build: ./frontend
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8100
+      # Dev-only: this machine is behind an SSL-intercepting proxy that breaks Next's
+      # runtime download of the native SWC binary. Trust the leaf cert so Node can fetch it.
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
     depends_on: [backend]
     ports: ["3000:3000"]
     volumes: ["./frontend:/app", "/app/node_modules"]
