@@ -5,6 +5,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libffi-dev libcairo2 shared-mime-info \
     && rm -rf /var/lib/apt/lists/*
 COPY pyproject.toml ./
+# This machine sits behind an SSL-intercepting proxy; trust PyPI hosts so that
+# pip (and its PEP517 build-isolation subprocesses) can fetch packages.
+ENV PIP_TRUSTED_HOST="pypi.org files.pythonhosted.org"
 RUN pip install --no-cache-dir -e ".[dev]"
 COPY . .
 EXPOSE 8000
