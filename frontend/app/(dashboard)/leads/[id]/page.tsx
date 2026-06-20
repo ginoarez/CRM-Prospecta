@@ -8,11 +8,12 @@ import AnalysisPanel from "@/components/scoring/analysis-panel";
 import MessagesPanel from "@/components/messaging/messages-panel";
 import ProposalsPanel from "@/components/proposals/proposals-panel";
 import EmailPanel from "@/components/email/email-panel";
+import AgendaPanel from "@/components/agenda/agenda-panel";
 
 export default function LeadDetailPage() {
   const { id } = useParams<{ id: string }>();
   const qc = useQueryClient();
-  const [tab, setTab] = useState<"info" | "analysis" | "messages" | "email" | "proposals" | "interactions">("info");
+  const [tab, setTab] = useState<"info" | "analysis" | "messages" | "email" | "proposals" | "agenda" | "interactions">("info");
   const [note, setNote] = useState("");
 
   const { data: lead } = useQuery({ queryKey: ["lead", id], queryFn: () => api<Lead>(`/leads/${id}`) });
@@ -41,6 +42,7 @@ export default function LeadDetailPage() {
         <button className={tabClass("messages")} onClick={() => setTab("messages")}>Mensajes</button>
         <button className={tabClass("email")} onClick={() => setTab("email")}>Email</button>
         <button className={tabClass("proposals")} onClick={() => setTab("proposals")}>Propuestas</button>
+        <button className={tabClass("agenda")} onClick={() => setTab("agenda")}>Agenda</button>
         <button className={tabClass("interactions")} onClick={() => setTab("interactions")}>Interacciones</button>
       </div>
 
@@ -64,6 +66,8 @@ export default function LeadDetailPage() {
       {tab === "email" && <EmailPanel leadId={id} />}
 
       {tab === "proposals" && <ProposalsPanel leadId={id} />}
+
+      {tab === "agenda" && <AgendaPanel leadId={id} />}
 
       {tab === "interactions" && (
         <div className="space-y-3">

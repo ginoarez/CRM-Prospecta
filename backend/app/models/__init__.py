@@ -6,5 +6,6 @@ from app.models.ai_analysis import AiAnalysis
 from app.models.template import Template
 from app.models.message import Message
 from app.models.proposal import Proposal
+from app.models.meeting import Meeting
 
-__all__ = ["User", "Lead", "LeadStatus", "Interaction", "GeoSearch", "AiAnalysis", "Template", "Message", "Proposal"]
+__all__ = ["User", "Lead", "LeadStatus", "Interaction", "GeoSearch", "AiAnalysis", "Template", "Message", "Proposal", "Meeting"]
