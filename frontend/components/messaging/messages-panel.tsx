@@ -80,6 +80,17 @@ export default function MessagesPanel({ leadId }: { leadId: string }) {
     onError: (e) => setWaErr((e as Error).message),
   });
 
+  // --- Asistente de objeciones (Fase 8a) ---
+  const [objection, setObjection] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const suggest = useMutation({
+    mutationFn: () => api<{ suggestions: string[] }>(`/leads/${leadId}/suggest-reply`, {
+      method: "POST", body: JSON.stringify({ objection: objection || null }),
+    }),
+    onSuccess: (r) => setSuggestions(r.suggestions),
+    onError: (e) => setWaErr((e as Error).message),
+  });
+
   return (
     <div className="space-y-3">
       <div className="flex gap-2">
@@ -115,6 +126,28 @@ export default function MessagesPanel({ leadId }: { leadId: string }) {
           <span className="text-xs text-gray-500">
             {windowOpen ? "ventana 24 h abierta" : "ventana 24 h cerrada — requiere plantilla aprobada"}
           </span>
+        </div>
+        <div className="space-y-2 border-t pt-2">
+          <div className="flex gap-2">
+            <input className="flex-1 rounded border p-2 text-sm" placeholder="Objeción del prospecto (opcional)"
+                   value={objection} onChange={(e) => setObjection(e.target.value)} />
+            <button className="rounded bg-purple-600 px-3 py-2 text-sm text-white disabled:opacity-50"
+                    onClick={() => suggest.mutate()} disabled={suggest.isPending}>
+              {suggest.isPending ? "Pensando…" : "Sugerir respuesta"}
+            </button>
+          </div>
+          {suggestions.length > 0 && (
+            <ul className="space-y-1">
+              {suggestions.map((s, i) => (
+                <li key={i}>
+                  <button className="w-full rounded border bg-gray-50 p-2 text-left text-sm hover:bg-gray-100"
+                          onClick={() => { setWaText(s); setSuggestions([]); }}>
+                    {s}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <textarea className="w-full rounded border p-2 text-sm" rows={3}
                   placeholder="Mensaje (solo dentro de la ventana de 24 h)"

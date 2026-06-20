@@ -124,3 +124,4 @@ export interface Meeting {
 }
 
 export interface WaSendResponse { task_id: string; status: string; }
+export interface ReplySuggestions { suggestions: string[]; }
