@@ -12,6 +12,7 @@ def geocode(location: str) -> list[float] | None:
         params={"q": location, "format": "json", "limit": 1},
         headers={"User-Agent": _USER_AGENT},
         timeout=settings.GEO_HTTP_TIMEOUT,
+        verify=settings.OUTBOUND_SSL_VERIFY,
     )
     resp.raise_for_status()
     data = resp.json()

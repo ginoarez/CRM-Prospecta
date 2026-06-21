@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     NOMINATIM_URL: str = "https://nominatim.openstreetmap.org"
     OVERPASS_URL: str = "https://overpass-api.de/api/interpreter"
     GEO_HTTP_TIMEOUT: float = 30.0
+    # Verificación TLS para llamadas HTTP salientes (OSM, etc.). Dejar en True en producción;
+    # ponerlo en false solo en redes con proxy que intercepta SSL (dev).
+    OUTBOUND_SSL_VERIFY: bool = True
     LLM_PROVIDER: str = "anthropic"
     LLM_MODEL: str = "claude-opus-4-8"
     ANTHROPIC_API_KEY: str = ""
