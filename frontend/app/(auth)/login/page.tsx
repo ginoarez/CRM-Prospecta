@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { api } from "@/lib/api-client";
 import { useAuth } from "@/lib/auth-store";
 import LoginBackground from "@/components/ui/login-background";
+import SpotlightCard from "@/components/ui/SpotlightCard";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -33,21 +34,25 @@ export default function LoginPage() {
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black">
       <LoginBackground />
-      <form onSubmit={submit} className="relative z-10 w-80 space-y-3 rounded-lg bg-white/95 p-6 shadow-2xl backdrop-blur">
-        <h1 className="text-xl font-semibold">Prospecta · {mode === "login" ? "Entrar" : "Registro"}</h1>
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <input className="w-full rounded border p-2" placeholder="Email" type="email"
-          value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input className="w-full rounded border p-2" placeholder="Contraseña" type="password"
-          value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <button className="w-full rounded bg-blue-600 p-2 text-white" type="submit">
-          {mode === "login" ? "Entrar" : "Crear cuenta"}
-        </button>
-        <button type="button" className="w-full text-sm text-blue-600"
-          onClick={() => setMode(mode === "login" ? "register" : "login")}>
-          {mode === "login" ? "Crear una cuenta" : "Ya tengo cuenta"}
-        </button>
-      </form>
+      <SpotlightCard className="relative z-10 w-80">
+        <form onSubmit={submit} className="space-y-3">
+          <h1 className="text-xl font-semibold text-white">Prospecta · {mode === "login" ? "Entrar" : "Registro"}</h1>
+          {error && <p className="text-sm text-red-300">{error}</p>}
+          <input className="w-full rounded border border-white/20 bg-white/90 p-2 text-gray-900 placeholder-gray-500"
+            placeholder="Email" type="email"
+            value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input className="w-full rounded border border-white/20 bg-white/90 p-2 text-gray-900 placeholder-gray-500"
+            placeholder="Contraseña" type="password"
+            value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <button className="w-full rounded bg-blue-600 p-2 text-white hover:bg-blue-500" type="submit">
+            {mode === "login" ? "Entrar" : "Crear cuenta"}
+          </button>
+          <button type="button" className="w-full text-sm text-blue-300 hover:text-blue-200"
+            onClick={() => setMode(mode === "login" ? "register" : "login")}>
+            {mode === "login" ? "Crear una cuenta" : "Ya tengo cuenta"}
+          </button>
+        </form>
+      </SpotlightCard>
     </div>
   );
 }

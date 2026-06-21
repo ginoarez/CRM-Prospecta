@@ -1,0 +1,13 @@
+/* Variante "glass": tarjeta semi-transparente que deja ver el fondo animado a través de ella.
+   Sin el spotlight que sigue al mouse (se omite el ::before del componente original). */
+.card-spotlight {
+  position: relative;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: rgba(17, 17, 17, 0.35);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
