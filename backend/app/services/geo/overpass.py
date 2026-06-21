@@ -2,6 +2,8 @@ import httpx
 
 from app.core.config import settings
 
+_USER_AGENT = "ProspectaCRM/0.1 (ginoarez23@gmail.com)"
+
 
 def build_query(bbox: list[float], tags: list[tuple[str, str]]) -> str:
     south, north, west, east = bbox
@@ -49,7 +51,9 @@ def fetch_pois(bbox: list[float], tags: list[tuple[str, str]]) -> list[dict]:
     resp = httpx.post(
         settings.OVERPASS_URL,
         data={"data": build_query(bbox, tags)},
+        headers={"User-Agent": _USER_AGENT},
         timeout=settings.GEO_HTTP_TIMEOUT,
+        verify=settings.OUTBOUND_SSL_VERIFY,
     )
     resp.raise_for_status()
     return parse_elements(resp.json().get("elements", []))
