@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api-client";
 import { useAuth } from "@/lib/auth-store";
-import DotField from "@/components/ui/DotField";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,12 +30,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#0b0a0f]">
-      <div className="absolute inset-0">
-        <DotField dotRadius={1.5} dotSpacing={14} bulgeStrength={67} glowRadius={160}
-                  sparkle={false} waveAmplitude={0} />
-      </div>
-      <form onSubmit={submit} className="relative z-10 w-80 space-y-3 rounded-lg bg-white p-6 shadow-2xl">
+    <div className="flex min-h-screen items-center justify-center">
+      <form onSubmit={submit} className="w-80 space-y-3 rounded-lg bg-white p-6 shadow">
         <h1 className="text-xl font-semibold">Prospecta · {mode === "login" ? "Entrar" : "Registro"}</h1>
         {error && <p className="text-sm text-red-600">{error}</p>}
         <input className="w-full rounded border p-2" placeholder="Email" type="email"
