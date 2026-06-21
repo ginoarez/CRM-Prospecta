@@ -1,8 +1,11 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { api } from "@/lib/api-client";
 import { useAuth } from "@/lib/auth-store";
+
+const FaultyTerminal = dynamic(() => import("@/components/ui/FaultyTerminal"), { ssr: false });
 
 export default function LoginPage() {
   const router = useRouter();
@@ -30,8 +33,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <form onSubmit={submit} className="w-80 space-y-3 rounded-lg bg-white p-6 shadow">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black">
+      <div className="absolute inset-0">
+        <FaultyTerminal scale={2.5} gridMul={[2, 1]} digitSize={0.9} timeScale={1.5}
+          pause={false} scanlineIntensity={0.6} glitchAmount={1} flickerAmount={1}
+          noiseAmp={1} chromaticAberration={0} dither={0} curvature={0} tint="#ffffff"
+          mouseReact={true} mouseStrength={0.4} pageLoadAnimation={false} brightness={0.5} />
+      </div>
+      <form onSubmit={submit} className="relative z-10 w-80 space-y-3 rounded-lg bg-white/95 p-6 shadow-2xl backdrop-blur">
         <h1 className="text-xl font-semibold">Prospecta · {mode === "login" ? "Entrar" : "Registro"}</h1>
         {error && <p className="text-sm text-red-600">{error}</p>}
         <input className="w-full rounded border p-2" placeholder="Email" type="email"
