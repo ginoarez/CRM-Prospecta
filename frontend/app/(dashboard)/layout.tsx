@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-store";
 import { GlassCard } from "@/components/ui/glass-card";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import InteriorBackground from "@/components/ui/interior-background";
 
 const NAV = [
   { href: "/", label: "Dashboard" },
@@ -26,7 +27,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (!accessToken) return null;
 
   return (
-    <div className="flex min-h-screen gap-4 p-4">
+    <>
+      <InteriorBackground />
+      <div className="relative z-10 flex min-h-screen gap-4 p-4">
       <GlassCard className="flex w-56 flex-none flex-col p-4">
         <h2 className="mb-6 px-2 text-lg font-bold tracking-tight">Prospecta</h2>
         <nav className="flex flex-col gap-1">
@@ -62,6 +65,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </GlassCard>
         <main className="min-w-0 flex-1">{children}</main>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

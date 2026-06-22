@@ -1,3 +1,6 @@
 
 # brainstorming visual companion
 .superpowers/
+
+# root-level tooling junk (MCP npx setup); the app lives in frontend/ and backend/
+/node_modules/
