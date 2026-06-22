@@ -17,6 +17,8 @@ def test_metrics_requires_auth(client):
 
 
 def test_metrics_weekly_series(client, auth_headers):
+    from datetime import date, timedelta
+
     for name in ("A", "B", "C"):
         client.post("/leads", json={"business_name": name}, headers=auth_headers)
 
@@ -29,3 +31,8 @@ def test_metrics_weekly_series(client, auth_headers):
     # todos creados ahora -> caen en la semana actual (último punto)
     assert sum(p["leads"] for p in body["weekly"]) == 3
     assert body["weekly"][-1]["leads"] == 3
+
+    # Verify week strings are ISO format Monday dates in chronological order
+    monday = date.today() - timedelta(days=date.today().weekday())
+    assert body["weekly"][0]["week"] == (monday - timedelta(weeks=7)).isoformat()
+    assert body["weekly"][-1]["week"] == monday.isoformat()
