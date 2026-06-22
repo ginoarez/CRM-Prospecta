@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -17,8 +17,9 @@ def _weekly_new_leads(db: Session, weeks: int = 8) -> list[dict]:
     )
     counts = {row[0].date().isoformat(): row[1] for row in rows}
 
-    today = datetime.now(timezone.utc).date()
-    monday = today - timedelta(days=today.weekday())  # lunes de esta semana
+    # anchor = Monday of the current week, computed on the DB clock so the
+    # keys match date_trunc('week', created_at) regardless of server timezone.
+    monday = db.query(func.date_trunc("week", func.now())).scalar().date()
     series: list[dict] = []
     for i in range(weeks - 1, -1, -1):  # del más viejo al más nuevo
         wk = (monday - timedelta(weeks=i)).isoformat()

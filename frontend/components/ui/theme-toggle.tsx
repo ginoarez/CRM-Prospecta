@@ -18,13 +18,11 @@ export function ThemeToggle() {
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // @ts-ignore startViewTransition no está en todos los tipos de TS DOM
     if (!ref.current || reduce || !document.startViewTransition) {
       setTheme(next);
       return;
     }
 
-    // @ts-ignore idem
     await document.startViewTransition(() => {
       flushSync(() => setTheme(next));
     }).ready;
