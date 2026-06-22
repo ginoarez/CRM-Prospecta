@@ -6,6 +6,10 @@ export interface ThreadsProps extends HTMLAttributes<HTMLDivElement> {
   amplitude?: number;
   distance?: number;
   enableMouseInteraction?: boolean;
+  /** Hard cap on device pixel ratio (perf). Default 1. */
+  dpr?: number;
+  /** Max render framerate. Default 30. */
+  fps?: number;
 }
 
 declare const Threads: ComponentType<ThreadsProps>;

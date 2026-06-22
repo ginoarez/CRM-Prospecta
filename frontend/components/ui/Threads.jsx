@@ -26,7 +26,7 @@ uniform vec2 uMouse;
 
 #define PI 3.1415926538
 
-const int u_line_count = 40;
+const int u_line_count = 20;
 const float u_line_width = 7.0;
 const float u_line_blur = 10.0;
 
@@ -121,12 +121,12 @@ void main() {
 }
 `;
 
-const Threads = ({ color = [1, 1, 1], amplitude = 1, distance = 0, enableMouseInteraction = false, ...rest }) => {
+const Threads = ({ color = [1, 1, 1], amplitude = 1, distance = 0, enableMouseInteraction = false, dpr = 1, fps = 30, ...rest }) => {
   const containerRef = useRef(null);
   const animationFrameId = useRef(0);
 
-  const propsRef = useRef({ color, amplitude, distance, enableMouseInteraction });
-  propsRef.current = { color, amplitude, distance, enableMouseInteraction };
+  const propsRef = useRef({ color, amplitude, distance, enableMouseInteraction, dpr, fps });
+  propsRef.current = { color, amplitude, distance, enableMouseInteraction, dpr, fps };
 
   useEffect(() => {
     const container = containerRef.current;
@@ -160,7 +160,9 @@ const Threads = ({ color = [1, 1, 1], amplitude = 1, distance = 0, enableMouseIn
     const MAX_RENDER_DIM = 1920;
     function resize() {
       const { clientWidth, clientHeight } = container;
-      const baseDpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Cap dpr hard: this shader is per-pixel expensive; on integrated GPUs a
+      // full-viewport canvas at dpr 2 saturates the GPU. Render at a low dpr.
+      const baseDpr = Math.min(window.devicePixelRatio || 1, propsRef.current.dpr || 1);
       const longestSide = Math.max(clientWidth, clientHeight) * baseDpr;
       const dpr = longestSide > MAX_RENDER_DIM ? (baseDpr * MAX_RENDER_DIM) / longestSide : baseDpr;
       renderer.dpr = dpr;
@@ -199,9 +201,15 @@ const Threads = ({ color = [1, 1, 1], amplitude = 1, distance = 0, enableMouseIn
     );
     intersectionObserver.observe(container);
 
+    let lastRender = 0;
     function update(t) {
       animationFrameId.current = requestAnimationFrame(update);
       if (!isVisible || document.hidden) return;
+
+      // Throttle to the requested fps (default 30) — a background doesn't need 60.
+      const minDelta = 1000 / (propsRef.current.fps || 30);
+      if (t - lastRender < minDelta) return;
+      lastRender = t;
 
       const { color, amplitude, distance, enableMouseInteraction } = propsRef.current;
 

@@ -22,7 +22,8 @@ function InteriorBackground() {
 
   return (
     <div className="pointer-events-none fixed inset-0 opacity-50 dark:opacity-60">
-      <Threads color={color} amplitude={1} distance={0.4} enableMouseInteraction={false} />
+      {/* dpr/fps bajos: shader caro a pantalla completa en GPU integrada (ver login). */}
+      <Threads color={color} amplitude={0.9} distance={0.4} enableMouseInteraction={false} dpr={0.6} fps={30} />
     </div>
   );
 }
