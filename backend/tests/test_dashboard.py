@@ -14,3 +14,18 @@ def test_metrics_funnel(client, auth_headers):
 
 def test_metrics_requires_auth(client):
     assert client.get("/dashboard/metrics").status_code == 401
+
+
+def test_metrics_weekly_series(client, auth_headers):
+    for name in ("A", "B", "C"):
+        client.post("/leads", json={"business_name": name}, headers=auth_headers)
+
+    body = client.get("/dashboard/metrics", headers=auth_headers).json()
+
+    assert "weekly" in body
+    assert len(body["weekly"]) == 8
+    # cada punto tiene week (str) y leads (int)
+    assert all(set(p.keys()) == {"week", "leads"} for p in body["weekly"])
+    # todos creados ahora -> caen en la semana actual (último punto)
+    assert sum(p["leads"] for p in body["weekly"]) == 3
+    assert body["weekly"][-1]["leads"] == 3
