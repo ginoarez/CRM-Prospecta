@@ -30,7 +30,12 @@ export interface LeadList { items: Lead[]; total: number; page: number; page_siz
 export interface Interaction {
   id: string; lead_id: string; kind: string; content: string | null; created_at: string;
 }
-export interface DashboardMetrics { total_leads: number; by_status: Record<string, number>; }
+export interface WeeklyPoint { week: string; leads: number; }
+export interface DashboardMetrics {
+  total_leads: number;
+  by_status: Record<string, number>;
+  weekly: WeeklyPoint[];
+}
 
 export interface GeoCategory { key: string; label: string; }
 
