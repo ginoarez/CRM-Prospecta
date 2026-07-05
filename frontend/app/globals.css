@@ -31,3 +31,28 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Popup grafito del mapa /buscar (Leaflet) */
+.geo-map .leaflet-popup-content-wrapper {
+  background: rgba(250, 250, 250, 0.92);
+  color: hsl(var(--foreground));
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+.dark .geo-map .leaflet-popup-content-wrapper {
+  background: rgba(20, 20, 24, 0.92);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+.geo-map .leaflet-popup-tip { background: rgba(250, 250, 250, 0.92); }
+.dark .geo-map .leaflet-popup-tip { background: rgba(20, 20, 24, 0.92); }
+.geo-map .leaflet-popup-content { margin: 14px 16px; font: inherit; }
+@keyframes geo-popup-in {
+  from { opacity: 0; transform: scale(0.92) translateY(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.geo-map .leaflet-popup { animation: geo-popup-in 180ms ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .geo-map .leaflet-popup { animation: none; }
+}
