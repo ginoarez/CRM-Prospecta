@@ -23,7 +23,7 @@ export default function BuscarPage() {
   const [focus, setFocus] = useState<MapFocus | null>(null);
   const [importedIds, setImportedIds] = useState<Set<string>>(new Set());
   const [importingId, setImportingId] = useState<string | null>(null);
-  const [importErr, setImportErr] = useState<string | null>(null);
+  const [importErr, setImportErr] = useState<{ osmId: string; msg: string } | null>(null);
 
   useEffect(() => {
     api<GeoCategory[]>("/geo/categories")
@@ -69,7 +69,7 @@ export default function BuscarPage() {
       setImportedIds((s) => new Set(s).add(r.osm_id));
       qc.invalidateQueries({ queryKey: ["leads"] });
     } catch (err) {
-      setImportErr((err as Error).message);
+      setImportErr({ osmId: r.osm_id, msg: (err as Error).message });
     } finally {
       setImportingId(null);
     }
@@ -87,6 +87,7 @@ export default function BuscarPage() {
         body: JSON.stringify({ items }),
       });
       setImportMsg(`Creados: ${res.created} · Ya existían: ${res.skipped_existing}`);
+      setImportedIds((s) => { const n = new Set(s); chosen.forEach((c) => n.add(c.osm_id)); return n; });
     } catch (err) {
       setError((err as Error).message);
     }
@@ -145,7 +146,7 @@ export default function BuscarPage() {
                              onChange={(e) => setSelected((s) => ({ ...s, [r.osm_id]: e.target.checked }))} />
                     </td>
                     <td className="py-2 pr-3 font-medium">
-                      <button className="text-left font-medium underline-offset-2 hover:underline"
+                      <button type="button" className="text-left font-medium underline-offset-2 hover:underline"
                               onClick={() => setFocus({ osmId: r.osm_id, ts: Date.now() })}>{r.name}</button>
                     </td>
                     <td className="py-2 pr-3">{r.phone ?? "—"}</td>

@@ -52,7 +52,7 @@
   from { opacity: 0; transform: scale(0.92) translateY(4px); }
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
-.geo-map .leaflet-popup { animation: geo-popup-in 180ms ease-out; }
+.geo-map .leaflet-popup-content-wrapper { animation: geo-popup-in 180ms ease-out; }
 @media (prefers-reduced-motion: reduce) {
-  .geo-map .leaflet-popup { animation: none; }
+  .geo-map .leaflet-popup-content-wrapper { animation: none; }
 }

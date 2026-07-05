@@ -34,7 +34,7 @@ export default function MapView({ results, focus, onImport, importedIds, importi
   onImport: (r: GeoResult) => void;
   importedIds: Set<string>;
   importingId: string | null;
-  importError: string | null;
+  importError: { osmId: string; msg: string } | null;
 }) {
   const markers = useRef(new Map<string, L.Marker>());
   const center: [number, number] = results.length ? [results[0].lat, results[0].lng] : [-34.6, -58.4];
@@ -49,7 +49,7 @@ export default function MapView({ results, focus, onImport, importedIds, importi
             <BusinessPopup r={r} onImport={onImport}
               imported={r.already_imported || importedIds.has(r.osm_id)}
               importing={importingId === r.osm_id}
-              error={importError} />
+              error={importError?.osmId === r.osm_id ? importError.msg : null} />
           </Popup>
         </Marker>
       ))}
