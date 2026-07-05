@@ -44,7 +44,7 @@ export default function MapView({ results, focus, onImport, importedIds, importi
       <FocusHandler focus={focus} markers={markers} />
       {results.map((r) => (
         <Marker key={r.osm_id} position={[r.lat, r.lng]} icon={icon}
-                ref={(m) => { if (m) markers.current.set(r.osm_id, m); }}>
+                ref={(m) => { if (m) markers.current.set(r.osm_id, m); else markers.current.delete(r.osm_id); }}>
           <Popup maxWidth={280}>
             <BusinessPopup r={r} onImport={onImport}
               imported={r.already_imported || importedIds.has(r.osm_id)}
