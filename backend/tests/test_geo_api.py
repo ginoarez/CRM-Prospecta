@@ -35,6 +35,36 @@ def test_search_returns_results(client, auth_headers, monkeypatch):
     assert body["results"][0]["already_imported"] is False
 
 
+def test_search_response_includes_details_and_gmaps(client, auth_headers, monkeypatch):
+    poi = {"osm_id": "node/9", "name": "SmartFitness", "lat": 25.67, "lng": -100.31,
+           "website": None, "phone": None, "address": None,
+           "details": {"category": "fitness_centre", "opening_hours": "Mo-Fr 06:00-22:00",
+                        "brand": None, "email": None, "instagram": None, "facebook": None,
+                        "wheelchair": None, "delivery": None, "takeaway": None},
+           "google_maps_url": "https://www.google.com/maps/search/?api=1&query=SmartFitness%2025.67%2C-100.31"}
+    _patch_geo(monkeypatch, [poi])
+    res = client.post("/geo/search", json={"location": "monterrey", "category": "gym"}, headers=auth_headers)
+    assert res.status_code == 200
+    r = res.json()["results"][0]
+    assert r["details"]["category"] == "fitness_centre"
+    assert r["details"]["opening_hours"] == "Mo-Fr 06:00-22:00"
+    assert r["google_maps_url"] == poi["google_maps_url"]
+
+
+def test_search_response_defaults_details_and_gmaps_when_poi_lacks_them(client, auth_headers, monkeypatch):
+    # _poi() no incluye details/google_maps_url (forma "vieja"): el schema debe rellenar defaults
+    _patch_geo(monkeypatch, [_poi()])
+    res = client.post("/geo/search", json={"location": "Palermo", "category": "gym"}, headers=auth_headers)
+    assert res.status_code == 200
+    r = res.json()["results"][0]
+    assert r["details"] == {
+        "category": None, "opening_hours": None, "brand": None, "email": None,
+        "instagram": None, "facebook": None, "wheelchair": None,
+        "delivery": None, "takeaway": None,
+    }
+    assert r["google_maps_url"] == ""
+
+
 def test_search_unknown_category_422(client, auth_headers):
     r = client.post("/geo/search", json={"location": "X", "category": "nope"}, headers=auth_headers)
     assert r.status_code == 422
