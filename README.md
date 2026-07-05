@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎯 Prospecta
+# 🎯 CRM - Prospecta (Scraper and OSM)
 
 **CRM de prospección para agencias de IA, automatización y marketing.**
 
