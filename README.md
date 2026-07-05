@@ -109,7 +109,6 @@ docker compose exec backend python -m app.scripts.seed_admin
 │   └── app/
 │       ├── (auth)/        # login (WebGL + glass)
 │       └── (dashboard)/   # dashboard, leads, buscar, plantillas
-├── docs/superpowers/ # specs y planes por fase (brainstorm → spec → plan → código)
 └── docker-compose.yml
 ```
 
@@ -134,7 +133,7 @@ cd frontend && npm run build              # verificación del frontend
 
 <div align="center">
 
-Construido por fases con specs y planes versionados en [`docs/superpowers/`](docs/superpowers/) 📐
+Construido por fases: brainstorm → spec → plan → código 📐
 
 **Proyecto privado** · © Gino Arez
 

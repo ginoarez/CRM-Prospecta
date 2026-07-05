@@ -2,6 +2,10 @@
 # brainstorming visual companion
 .superpowers/
 
+# working docs privados (spec maestra y planes por fase) — solo locales
+/CLAUDE-1.md
+/docs/superpowers/
+
 # root-level tooling junk (MCP npx setup); the app lives in frontend/ and backend/
 /node_modules/
 /package.json
