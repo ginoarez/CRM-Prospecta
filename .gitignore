@@ -4,3 +4,6 @@
 
 # root-level tooling junk (MCP npx setup); the app lives in frontend/ and backend/
 /node_modules/
+/package.json
+/package-lock.json
+/.mcp.json
