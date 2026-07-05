@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, downloadFile } from "@/lib/api-client";
 import type { Proposal, ProposalResponse, TaskStatus } from "@/lib/types";
+import { GlassCard } from "@/components/ui/glass-card";
+import { Button } from "@/components/ui/controls";
 
 export default function ProposalsPanel({ leadId }: { leadId: string }) {
   const qc = useQueryClient();
@@ -45,24 +47,23 @@ export default function ProposalsPanel({ leadId }: { leadId: string }) {
 
   return (
     <div className="space-y-3">
-      <button className="rounded bg-blue-600 px-3 py-2 text-white disabled:opacity-50"
-              onClick={() => start.mutate()} disabled={running}>
+      <Button onClick={() => start.mutate()} disabled={running}>
         {running ? "Generando…" : proposal ? "Regenerar propuesta" : "Generar propuesta"}
-      </button>
-      {error && <p className="text-red-600">{error}</p>}
+      </Button>
+      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
       {proposal && c && (
-        <div className="space-y-2 rounded bg-white p-3 shadow text-sm">
+        <GlassCard className="max-w-2xl space-y-2 p-5 text-sm">
           <div className="flex items-center gap-3">
             <span className="text-2xl font-bold">
               {proposal.price != null ? `$${proposal.price.toLocaleString()}` : "A convenir"}
             </span>
-            {c.tiempo_estimado && <span className="text-gray-500">· {c.tiempo_estimado}</span>}
+            {c.tiempo_estimado && <span className="text-muted-foreground">· {c.tiempo_estimado}</span>}
             {proposal.pdf_available && (
-              <button className="ml-auto rounded bg-green-600 px-3 py-1 text-white"
+              <Button variant="ghost" className="ml-auto px-3 py-1"
                       onClick={() => downloadFile(`/proposals/${proposal.id}/pdf`, `propuesta-${proposal.id}.pdf`)}>
                 Descargar PDF
-              </button>
+              </Button>
             )}
           </div>
           {c.diagnostico && <p>{c.diagnostico}</p>}
@@ -70,10 +71,10 @@ export default function ProposalsPanel({ leadId }: { leadId: string }) {
             <div><b>Soluciones:</b><ul className="list-disc pl-5">{c.soluciones.map((s, i) => <li key={i}>{s}</li>)}</ul></div>
           )}
           {c.roi_estimado && <p><b>ROI estimado:</b> {c.roi_estimado}</p>}
-          <p className="text-xs text-gray-400">{new Date(proposal.created_at).toLocaleString()}</p>
-        </div>
+          <p className="text-xs text-muted-foreground">{new Date(proposal.created_at).toLocaleString()}</p>
+        </GlassCard>
       )}
-      {!proposal && !running && !isLoading && <p className="text-sm text-gray-500">Este lead aún no tiene propuesta.</p>}
+      {!proposal && !running && !isLoading && <p className="text-sm text-muted-foreground">Este lead aún no tiene propuesta.</p>}
     </div>
   );
 }

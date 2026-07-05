@@ -7,6 +7,18 @@ export const LEAD_STATUSES: LeadStatus[] = [
   "propuesta_enviada", "negociacion", "ganado", "perdido", "descartado",
 ];
 
+export const STATUS_LABELS: Record<LeadStatus, string> = {
+  nuevo: "Nuevos",
+  calificado: "Calificados",
+  contactado: "Contactados",
+  en_conversacion: "En conversación",
+  propuesta_enviada: "Propuesta enviada",
+  negociacion: "Negociación",
+  ganado: "Ganados",
+  perdido: "Perdidos",
+  descartado: "Descartados",
+};
+
 export interface Lead {
   id: string;
   business_name: string;
