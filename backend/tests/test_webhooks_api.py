@@ -1,3 +1,7 @@
+import hashlib
+import hmac
+import json
+
 import pytest
 
 from app.core.config import settings
@@ -58,3 +62,39 @@ def test_inbound_garbage_returns_200(client):
 
 def test_inbound_is_public(client):
     assert client.post("/webhooks/whatsapp", json={}).status_code == 200
+
+
+def _signed(payload, secret):
+    body = json.dumps(payload).encode()
+    sig = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
+    return body, {"Content-Type": "application/json", "X-Hub-Signature-256": f"sha256={sig}"}
+
+
+def test_inbound_valid_signature_accepted(client, db, lead, monkeypatch):
+    monkeypatch.setattr(settings, "WHATSAPP_APP_SECRET", "app-secret")
+    body, headers = _signed(_inbound("Hola"), "app-secret")
+    res = client.post("/webhooks/whatsapp", content=body, headers=headers)
+    assert res.status_code == 200
+    assert res.json()["received"] == 1
+
+
+def test_inbound_bad_signature_rejected(client, db, lead, monkeypatch):
+    monkeypatch.setattr(settings, "WHATSAPP_APP_SECRET", "app-secret")
+    body, headers = _signed(_inbound("Hola"), "otro-secret")
+    res = client.post("/webhooks/whatsapp", content=body, headers=headers)
+    assert res.status_code == 403
+    assert db.query(Message).count() == 0
+
+
+def test_inbound_missing_signature_rejected_when_secret_set(client, db, lead, monkeypatch):
+    monkeypatch.setattr(settings, "WHATSAPP_APP_SECRET", "app-secret")
+    res = client.post("/webhooks/whatsapp", json=_inbound("Hola"))
+    assert res.status_code == 403
+    assert db.query(Message).count() == 0
+
+
+def test_inbound_no_secret_configured_skips_verification(client, db, lead):
+    # dev: sin WHATSAPP_APP_SECRET el webhook sigue aceptando sin firma
+    res = client.post("/webhooks/whatsapp", json=_inbound("Hola"))
+    assert res.status_code == 200
+    assert res.json()["received"] == 1

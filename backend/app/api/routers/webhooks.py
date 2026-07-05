@@ -1,3 +1,5 @@
+import hashlib
+import hmac
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, Request, Response, status
@@ -24,8 +26,17 @@ def verify(request: Request):
     return Response(status_code=status.HTTP_403_FORBIDDEN)
 
 
+def _valid_signature(body: bytes, header: str | None) -> bool:
+    expected = hmac.new(settings.WHATSAPP_APP_SECRET.encode(), body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(f"sha256={expected}", header or "")
+
+
 @router.post("")
 async def incoming(request: Request, db: Session = Depends(get_db)):
+    body = await request.body()
+    if settings.WHATSAPP_APP_SECRET and not _valid_signature(
+            body, request.headers.get("X-Hub-Signature-256")):
+        return Response(status_code=status.HTTP_403_FORBIDDEN)
     try:
         payload = await request.json()
     except Exception:

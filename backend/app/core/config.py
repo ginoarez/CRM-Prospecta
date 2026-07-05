@@ -41,6 +41,9 @@ class Settings(BaseSettings):
     WHATSAPP_PHONE_ID: str = ""
     WHATSAPP_BUSINESS_ID: str = ""
     WHATSAPP_VERIFY_TOKEN: str = ""
+    # App secret de la app de Meta: firma HMAC-SHA256 de los webhooks (X-Hub-Signature-256).
+    # Vacío = no se verifica (solo dev); en producción SIEMPRE configurarlo.
+    WHATSAPP_APP_SECRET: str = ""
     WHATSAPP_API_URL: str = "https://graph.facebook.com"
     WHATSAPP_API_VERSION: str = "v21.0"
 
