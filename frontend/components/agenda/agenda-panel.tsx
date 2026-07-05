@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, downloadFile } from "@/lib/api-client";
 import type { Meeting } from "@/lib/types";
+import { GlassCard } from "@/components/ui/glass-card";
+import { Button, Input, Textarea } from "@/components/ui/controls";
 
 export default function AgendaPanel({ leadId }: { leadId: string }) {
   const qc = useQueryClient();
@@ -40,48 +42,49 @@ export default function AgendaPanel({ leadId }: { leadId: string }) {
   });
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-2 rounded bg-white p-3 shadow">
-        <input className="w-full rounded border p-2" placeholder="Título de la cita"
+    <div className="max-w-2xl space-y-4">
+      <GlassCard className="space-y-2 p-4">
+        <Input className="w-full" placeholder="Título de la cita"
                value={title} onChange={(e) => setTitle(e.target.value)} />
         <div className="flex gap-2">
-          <input type="datetime-local" className="rounded border p-2" value={when}
+          <Input type="datetime-local" value={when}
                  onChange={(e) => setWhen(e.target.value)} />
-          <input type="number" className="w-24 rounded border p-2" value={duration}
+          <Input type="number" className="w-24" value={duration}
                  onChange={(e) => setDuration(Number(e.target.value))} placeholder="min" />
         </div>
-        <input className="w-full rounded border p-2" placeholder="Lugar o enlace de video"
+        <Input className="w-full" placeholder="Lugar o enlace de video"
                value={location} onChange={(e) => setLocation(e.target.value)} />
-        <textarea className="w-full rounded border p-2" placeholder="Notas"
+        <Textarea className="w-full" placeholder="Notas"
                   value={notes} onChange={(e) => setNotes(e.target.value)} />
-        <button className="rounded bg-blue-600 px-3 py-2 text-white disabled:opacity-50"
-                onClick={() => create.mutate()} disabled={!title || !when}>
+        <Button onClick={() => create.mutate()} disabled={!title || !when}>
           Programar cita
-        </button>
-        {error && <p className="text-red-600">{error}</p>}
-      </div>
+        </Button>
+        {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      </GlassCard>
 
       <ul className="space-y-2">
         {(meetings ?? []).map((m) => (
-          <li key={m.id} className="rounded bg-white p-3 text-sm shadow">
+          <GlassCard key={m.id} className="p-4 text-sm">
             <div className="flex items-center gap-2">
               <span className="font-medium">{m.title}</span>
-              <span className="rounded bg-gray-100 px-2 py-0.5 text-xs">{m.status}</span>
-              <span className="text-gray-500">{new Date(m.scheduled_at).toLocaleString()} · {m.duration_minutes} min</span>
+              <span className="rounded-md border border-black/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground dark:border-white/10">
+                {m.status}
+              </span>
+              <span className="text-muted-foreground">{new Date(m.scheduled_at).toLocaleString()} · {m.duration_minutes} min</span>
             </div>
-            {m.location && <div className="text-gray-600">{m.location}</div>}
+            {m.location && <div className="mt-0.5 text-muted-foreground">{m.location}</div>}
             <div className="mt-2 flex flex-wrap gap-3">
-              <a className="text-blue-600 underline" href={m.google_calendar_url} target="_blank" rel="noreferrer">Añadir a Google Calendar</a>
-              <button className="text-blue-600 underline"
+              <a className="underline underline-offset-2 hover:text-muted-foreground" href={m.google_calendar_url} target="_blank" rel="noreferrer">Añadir a Google Calendar</a>
+              <button className="underline underline-offset-2 hover:text-muted-foreground"
                       onClick={() => downloadFile(`/meetings/${m.id}/ics`, `cita-${m.id}.ics`)}>Descargar .ics</button>
               {m.status === "programada" && (
                 <>
-                  <button className="text-green-600 underline" onClick={() => setStatus.mutate({ id: m.id, status: "realizada" })}>Marcar realizada</button>
-                  <button className="text-red-600 underline" onClick={() => setStatus.mutate({ id: m.id, status: "cancelada" })}>Cancelar</button>
+                  <button className="underline underline-offset-2 hover:text-muted-foreground" onClick={() => setStatus.mutate({ id: m.id, status: "realizada" })}>Marcar realizada</button>
+                  <button className="text-red-600 underline underline-offset-2 dark:text-red-400" onClick={() => setStatus.mutate({ id: m.id, status: "cancelada" })}>Cancelar</button>
                 </>
               )}
             </div>
-          </li>
+          </GlassCard>
         ))}
       </ul>
     </div>

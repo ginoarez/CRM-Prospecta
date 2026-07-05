@@ -2,22 +2,10 @@
 import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
-import { DashboardMetrics, LEAD_STATUSES, LeadStatus } from "@/lib/types";
+import { DashboardMetrics, LEAD_STATUSES, STATUS_LABELS } from "@/lib/types";
 import { GlassCard } from "@/components/ui/glass-card";
 import { NumberTicker } from "@/components/ui/number-ticker";
 import { Sparkline } from "@/components/ui/sparkline";
-
-const STATUS_LABELS: Record<LeadStatus, string> = {
-  nuevo: "Nuevos",
-  calificado: "Calificados",
-  contactado: "Contactados",
-  en_conversacion: "En conversación",
-  propuesta_enviada: "Propuesta enviada",
-  negociacion: "Negociación",
-  ganado: "Ganados",
-  perdido: "Perdidos",
-  descartado: "Descartados",
-};
 
 function Icon({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (

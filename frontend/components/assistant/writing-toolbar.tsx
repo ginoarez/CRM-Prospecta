@@ -59,21 +59,21 @@ export default function WritingToolbar({
   return (
     <div className="space-y-1">
       <div className="flex flex-wrap gap-2">
-        <button type="button" className="rounded border px-2 py-1 text-xs disabled:opacity-50"
+        <button type="button" className="rounded-md border border-black/10 px-2 py-1 text-xs transition-colors hover:bg-black/[0.04] disabled:opacity-50 dark:border-white/10 dark:hover:bg-white/[0.06]"
                 onClick={runSpell} disabled={!!busy || !value}>
           Corregir ortografía
         </button>
-        <button type="button" className="rounded border px-2 py-1 text-xs disabled:opacity-50"
+        <button type="button" className="rounded-md border border-black/10 px-2 py-1 text-xs transition-colors hover:bg-black/[0.04] disabled:opacity-50 dark:border-white/10 dark:hover:bg-white/[0.06]"
                 onClick={() => runGen("improve")} disabled={!!busy || !value}>
           Reescribir
         </button>
-        <button type="button" className="rounded border px-2 py-1 text-xs disabled:opacity-50"
+        <button type="button" className="rounded-md border border-black/10 px-2 py-1 text-xs transition-colors hover:bg-black/[0.04] disabled:opacity-50 dark:border-white/10 dark:hover:bg-white/[0.06]"
                 onClick={() => runGen("draft")} disabled={!!busy}>
           Redactar
         </button>
-        {label && <span className="self-center text-xs text-gray-500">{label}</span>}
+        {label && <span className="self-center text-xs text-muted-foreground">{label}</span>}
       </div>
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
     </div>
   );
 }

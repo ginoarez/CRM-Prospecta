@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { EmailPreview, EmailSendResponse, Template, TaskStatus } from "@/lib/types";
 import WritingToolbar from "@/components/assistant/writing-toolbar";
+import { Button, Input, Select, Textarea } from "@/components/ui/controls";
 
 export default function EmailPanel({ leadId }: { leadId: string }) {
   const qc = useQueryClient();
@@ -59,25 +60,24 @@ export default function EmailPanel({ leadId }: { leadId: string }) {
   const sending = !!taskId;
 
   return (
-    <div className="space-y-3">
+    <div className="max-w-2xl space-y-3">
       <div className="flex gap-2">
-        <select className="rounded border p-2" value={templateId}
+        <Select value={templateId}
                 onChange={(e) => { setTemplateId(e.target.value); if (e.target.value) preview.mutate(e.target.value); }}>
           <option value="">Elegir plantilla…</option>
           {emailTemplates.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
-        </select>
+        </Select>
       </div>
-      <input className="w-full rounded border p-2" placeholder="Asunto"
+      <Input className="w-full" placeholder="Asunto"
              value={subject} onChange={(e) => setSubject(e.target.value)} />
       <WritingToolbar value={body} onChange={setBody} />
-      <textarea className="h-40 w-full rounded border p-2" placeholder="Cuerpo del correo"
+      <Textarea className="h-40 w-full" placeholder="Cuerpo del correo"
                 value={body} onChange={(e) => setBody(e.target.value)} />
-      <button className="rounded bg-blue-600 px-3 py-2 text-white disabled:opacity-50"
-              onClick={() => send.mutate()} disabled={sending || !subject || !body}>
+      <Button onClick={() => send.mutate()} disabled={sending || !subject || !body}>
         {sending ? "Enviando…" : "Enviar email"}
-      </button>
-      {msg && <p className="text-green-600">{msg}</p>}
-      {error && <p className="text-red-600">{error}</p>}
+      </Button>
+      {msg && <p className="text-sm text-muted-foreground">{msg}</p>}
+      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
     </div>
   );
 }

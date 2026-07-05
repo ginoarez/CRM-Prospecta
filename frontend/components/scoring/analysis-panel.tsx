@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { Analysis, AnalyzeResponse, TaskStatus } from "@/lib/types";
+import { GlassCard } from "@/components/ui/glass-card";
+import { Button } from "@/components/ui/controls";
 
 export default function AnalysisPanel({ leadId }: { leadId: string }) {
   const qc = useQueryClient();
@@ -44,19 +46,22 @@ export default function AnalysisPanel({ leadId }: { leadId: string }) {
 
   return (
     <div className="space-y-3">
-      <button className="rounded bg-blue-600 px-3 py-2 text-white disabled:opacity-50"
-              onClick={() => start.mutate()} disabled={running}>
+      <Button onClick={() => start.mutate()} disabled={running}>
         {running ? "Analizando…" : "Analizar con IA"}
-      </button>
-      {error && <p className="text-red-600">{error}</p>}
+      </Button>
+      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
       {analysis && (
-        <div className="space-y-2 rounded bg-white p-3 shadow text-sm">
+        <GlassCard className="max-w-2xl space-y-2 p-5 text-sm">
           <div className="flex items-center gap-3">
             <span className="text-2xl font-bold">{analysis.score ?? "—"}</span>
-            <span className="text-gray-500">/100</span>
-            {analysis.urgency && <span className="rounded bg-gray-100 px-2 py-0.5">urgencia: {analysis.urgency}</span>}
-            {analysis.buy_probability != null && <span className="text-gray-500">prob. compra: {analysis.buy_probability}%</span>}
+            <span className="text-muted-foreground">/100</span>
+            {analysis.urgency && (
+              <span className="rounded-md border border-black/10 px-2 py-0.5 text-xs text-muted-foreground dark:border-white/10">
+                urgencia: {analysis.urgency}
+              </span>
+            )}
+            {analysis.buy_probability != null && <span className="text-muted-foreground">prob. compra: {analysis.buy_probability}%</span>}
           </div>
           {analysis.summary && <p>{analysis.summary}</p>}
           {analysis.needs.length > 0 && <p><b>Necesidades:</b> {analysis.needs.join(", ")}</p>}
@@ -66,10 +71,10 @@ export default function AnalysisPanel({ leadId }: { leadId: string }) {
           {analysis.opportunities.length > 0 && (
             <div><b>Oportunidades:</b><ul className="list-disc pl-5">{analysis.opportunities.map((o, i) => <li key={i}>{o}</li>)}</ul></div>
           )}
-          <p className="text-xs text-gray-400">{analysis.model ? `${analysis.model} · ` : ""}{new Date(analysis.created_at).toLocaleString()}</p>
-        </div>
+          <p className="text-xs text-muted-foreground">{analysis.model ? `${analysis.model} · ` : ""}{new Date(analysis.created_at).toLocaleString()}</p>
+        </GlassCard>
       )}
-      {!analysis && !running && !isLoading && <p className="text-sm text-gray-500">Este lead aún no tiene análisis.</p>}
+      {!analysis && !running && !isLoading && <p className="text-sm text-muted-foreground">Este lead aún no tiene análisis.</p>}
     </div>
   );
 }

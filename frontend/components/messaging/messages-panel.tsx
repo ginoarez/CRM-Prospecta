@@ -4,6 +4,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { Lead, Message, Template, TaskStatus, WaLink, WaSendResponse } from "@/lib/types";
 import WritingToolbar from "@/components/assistant/writing-toolbar";
+import { GlassCard } from "@/components/ui/glass-card";
+import { Button, Input, Select, Textarea } from "@/components/ui/controls";
 
 export default function MessagesPanel({ leadId }: { leadId: string }) {
   const qc = useQueryClient();
@@ -95,53 +97,53 @@ export default function MessagesPanel({ leadId }: { leadId: string }) {
   return (
     <div className="space-y-3">
       <div className="flex gap-2">
-        <select className="rounded border p-2" value={templateId}
-                onChange={(e) => setTemplateId(e.target.value)}>
+        <Select value={templateId} onChange={(e) => setTemplateId(e.target.value)}>
           <option value="">— plantilla —</option>
           {(templates ?? []).map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
-        </select>
-        <button className="rounded bg-blue-600 px-3 py-2 text-white disabled:opacity-50"
-                disabled={!templateId || generate.isPending} onClick={() => generate.mutate()}>
+        </Select>
+        <Button disabled={!templateId || generate.isPending} onClick={() => generate.mutate()}>
           Generar wa.me
-        </button>
+        </Button>
       </div>
-      {error && <p className="text-red-600">{error}</p>}
+      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
       {phone && waUrl && (
-        <div className="space-y-2 rounded bg-white p-3 shadow">
-          <textarea className="w-full rounded border p-2 text-sm" rows={4}
+        <GlassCard className="max-w-2xl space-y-2 p-4">
+          <Textarea className="w-full" rows={4}
                     value={body} onChange={(e) => setBody(e.target.value)} />
           <div className="flex gap-2">
-            <a className="rounded bg-green-600 px-3 py-2 text-white" href={waUrl}
-               target="_blank" rel="noreferrer">Abrir WhatsApp</a>
-            <button className="rounded bg-gray-800 px-3 py-2 text-white disabled:opacity-50"
-                    disabled={markSent.isPending} onClick={() => markSent.mutate()}>Marcar como enviado</button>
+            <a className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-85"
+               href={waUrl} target="_blank" rel="noreferrer">Abrir WhatsApp</a>
+            <Button variant="ghost" disabled={markSent.isPending} onClick={() => markSent.mutate()}>
+              Marcar como enviado
+            </Button>
           </div>
-        </div>
+        </GlassCard>
       )}
 
-      <div className="space-y-2 rounded bg-white p-3 shadow">
+      <GlassCard className="max-w-2xl space-y-2 p-4">
         <div className="flex items-center gap-2">
           <span className="font-medium">WhatsApp Cloud</span>
-          {lead?.whatsapp_opt_out && <span className="rounded bg-red-100 px-2 py-0.5 text-xs text-red-700">opt-out</span>}
-          <span className="text-xs text-gray-500">
+          {lead?.whatsapp_opt_out && (
+            <span className="rounded-md border border-red-500/40 px-2 py-0.5 text-xs text-red-600 dark:text-red-400">opt-out</span>
+          )}
+          <span className="text-xs text-muted-foreground">
             {windowOpen ? "ventana 24 h abierta" : "ventana 24 h cerrada — requiere plantilla aprobada"}
           </span>
         </div>
-        <div className="space-y-2 border-t pt-2">
+        <div className="space-y-2 border-t border-black/10 pt-2 dark:border-white/10">
           <div className="flex gap-2">
-            <input className="flex-1 rounded border p-2 text-sm" placeholder="Objeción del prospecto (opcional)"
+            <Input className="flex-1" placeholder="Objeción del prospecto (opcional)"
                    value={objection} onChange={(e) => setObjection(e.target.value)} />
-            <button className="rounded bg-purple-600 px-3 py-2 text-sm text-white disabled:opacity-50"
-                    onClick={() => suggest.mutate()} disabled={suggest.isPending}>
+            <Button variant="ghost" onClick={() => suggest.mutate()} disabled={suggest.isPending}>
               {suggest.isPending ? "Pensando…" : "Sugerir respuesta"}
-            </button>
+            </Button>
           </div>
           {suggestions.length > 0 && (
             <ul className="space-y-1">
               {suggestions.map((s, i) => (
                 <li key={i}>
-                  <button className="w-full rounded border bg-gray-50 p-2 text-left text-sm hover:bg-gray-100"
+                  <button className="w-full rounded-lg border border-black/10 bg-black/[0.03] p-2 text-left text-sm transition-colors hover:bg-black/[0.06] dark:border-white/10 dark:bg-white/[0.04] dark:hover:bg-white/[0.08]"
                           onClick={() => { setWaText(s); setSuggestions([]); }}>
                     {s}
                   </button>
@@ -152,24 +154,24 @@ export default function MessagesPanel({ leadId }: { leadId: string }) {
         </div>
         <WritingToolbar value={waText} onChange={setWaText}
           context={lead ? `${lead.business_name}${lead.city ? ", " + lead.city : ""}` : undefined} />
-        <textarea className="w-full rounded border p-2 text-sm" rows={3}
+        <Textarea className="w-full" rows={3}
                   placeholder="Mensaje (solo dentro de la ventana de 24 h)"
                   value={waText} onChange={(e) => setWaText(e.target.value)} />
-        <button className="rounded bg-green-700 px-3 py-2 text-white disabled:opacity-50"
-                onClick={() => waSend.mutate()}
+        <Button onClick={() => waSend.mutate()}
                 disabled={!!waTask || !waText || !windowOpen || !!lead?.whatsapp_opt_out}>
           {waTask ? "Enviando…" : "Enviar por WhatsApp Cloud"}
-        </button>
-        {waErr && <p className="text-red-600">{waErr}</p>}
-      </div>
+        </Button>
+        {waErr && <p className="text-sm text-red-600 dark:text-red-400">{waErr}</p>}
+      </GlassCard>
 
-      <ul className="space-y-2">
+      <ul className="max-w-2xl space-y-2">
         {(messages ?? []).map((m) => (
-          <li key={m.id} className="rounded bg-white p-2 text-sm shadow">
-            <span className="font-medium">{m.channel}</span> · {m.direction} · {m.status}
-            <div>{m.body}</div>
-            <div className="text-xs text-gray-500">{new Date(m.created_at).toLocaleString()}</div>
-          </li>
+          <GlassCard key={m.id} className="p-3 text-sm">
+            <span className="font-medium">{m.channel}</span>
+            <span className="text-muted-foreground"> · {m.direction} · {m.status}</span>
+            <div className="mt-1">{m.body}</div>
+            <div className="mt-0.5 text-xs text-muted-foreground">{new Date(m.created_at).toLocaleString()}</div>
+          </GlassCard>
         ))}
       </ul>
     </div>
