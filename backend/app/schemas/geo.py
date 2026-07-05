@@ -11,6 +11,18 @@ class SearchRequest(BaseModel):
     category: str
 
 
+class GeoDetails(BaseModel):
+    category: str | None = None
+    opening_hours: str | None = None
+    brand: str | None = None
+    email: str | None = None
+    instagram: str | None = None
+    facebook: str | None = None
+    wheelchair: str | None = None
+    delivery: bool | None = None
+    takeaway: bool | None = None
+
+
 class GeoResult(BaseModel):
     osm_id: str
     name: str
@@ -19,6 +31,8 @@ class GeoResult(BaseModel):
     website: str | None = None
     phone: str | None = None
     address: str | None = None
+    details: GeoDetails = GeoDetails()
+    google_maps_url: str = ""
     already_imported: bool = False
 
 

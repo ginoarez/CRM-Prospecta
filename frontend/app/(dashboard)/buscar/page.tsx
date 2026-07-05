@@ -1,14 +1,17 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
+import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { GeoCategory, GeoResult, GeoSearchResponse, GeoImportResult } from "@/lib/types";
+import type { MapFocus } from "@/components/geo/map-view";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button, Input, Select } from "@/components/ui/controls";
 
 const MapView = dynamic(() => import("@/components/geo/map-view"), { ssr: false });
 
 export default function BuscarPage() {
+  const qc = useQueryClient();
   const [categories, setCategories] = useState<GeoCategory[]>([]);
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("");
@@ -17,6 +20,10 @@ export default function BuscarPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [importMsg, setImportMsg] = useState<string | null>(null);
+  const [focus, setFocus] = useState<MapFocus | null>(null);
+  const [importedIds, setImportedIds] = useState<Set<string>>(new Set());
+  const [importingId, setImportingId] = useState<string | null>(null);
+  const [importErr, setImportErr] = useState<{ osmId: string; msg: string } | null>(null);
 
   useEffect(() => {
     api<GeoCategory[]>("/geo/categories")
@@ -51,6 +58,23 @@ export default function BuscarPage() {
     [results, selected],
   );
 
+  async function importOne(r: GeoResult) {
+    setImportingId(r.osm_id); setImportErr(null);
+    try {
+      await api<GeoImportResult>("/geo/import", {
+        method: "POST",
+        body: JSON.stringify({ items: [{ osm_id: r.osm_id, name: r.name, lat: r.lat, lng: r.lng,
+          website: r.website, phone: r.phone, address: r.address, category }] }),
+      });
+      setImportedIds((s) => new Set(s).add(r.osm_id));
+      qc.invalidateQueries({ queryKey: ["leads"] });
+    } catch (err) {
+      setImportErr({ osmId: r.osm_id, msg: (err as Error).message });
+    } finally {
+      setImportingId(null);
+    }
+  }
+
   async function sendToCrm() {
     setImportMsg(null);
     const items = chosen.map((r) => ({
@@ -63,6 +87,7 @@ export default function BuscarPage() {
         body: JSON.stringify({ items }),
       });
       setImportMsg(`Creados: ${res.created} · Ya existían: ${res.skipped_existing}`);
+      setImportedIds((s) => { const n = new Set(s); chosen.forEach((c) => n.add(c.osm_id)); return n; });
     } catch (err) {
       setError((err as Error).message);
     }
@@ -96,7 +121,8 @@ export default function BuscarPage() {
       {results.length > 0 && (
         <>
           <GlassCard className="overflow-hidden p-1.5">
-            <MapView results={results} />
+            <MapView results={results} focus={focus} onImport={importOne} importedIds={importedIds}
+                      importingId={importingId} importError={importErr} />
           </GlassCard>
           <div className="flex items-center gap-3">
             <Button type="button" onClick={sendToCrm} disabled={chosen.length === 0}>
@@ -119,7 +145,10 @@ export default function BuscarPage() {
                       <input type="checkbox" className="accent-current" checked={!!selected[r.osm_id]}
                              onChange={(e) => setSelected((s) => ({ ...s, [r.osm_id]: e.target.checked }))} />
                     </td>
-                    <td className="py-2 pr-3 font-medium">{r.name}</td>
+                    <td className="py-2 pr-3 font-medium">
+                      <button type="button" className="text-left font-medium underline-offset-2 hover:underline"
+                              onClick={() => setFocus({ osmId: r.osm_id, ts: Date.now() })}>{r.name}</button>
+                    </td>
                     <td className="py-2 pr-3">{r.phone ?? "—"}</td>
                     <td className="py-2 pr-3">
                       {r.website
@@ -127,7 +156,7 @@ export default function BuscarPage() {
                         : "—"}
                     </td>
                     <td className="py-2 pr-3 text-muted-foreground">{r.address ?? "—"}</td>
-                    <td className="py-2">{r.already_imported && <span className="text-xs text-muted-foreground">ya importado</span>}</td>
+                    <td className="py-2">{(r.already_imported || importedIds.has(r.osm_id)) && <span className="text-xs text-muted-foreground">ya importado</span>}</td>
                   </tr>
                 ))}
               </tbody>

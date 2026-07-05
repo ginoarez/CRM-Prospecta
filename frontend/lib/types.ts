@@ -51,6 +51,18 @@ export interface DashboardMetrics {
 
 export interface GeoCategory { key: string; label: string; }
 
+export interface GeoDetails {
+  category: string | null;
+  opening_hours: string | null;
+  brand: string | null;
+  email: string | null;
+  instagram: string | null;
+  facebook: string | null;
+  wheelchair: string | null;
+  delivery: boolean | null;
+  takeaway: boolean | null;
+}
+
 export interface GeoResult {
   osm_id: string;
   name: string;
@@ -60,6 +72,8 @@ export interface GeoResult {
   phone: string | null;
   address: string | null;
   already_imported: boolean;
+  details: GeoDetails;
+  google_maps_url: string;
 }
 
 export interface GeoSearchResponse {
